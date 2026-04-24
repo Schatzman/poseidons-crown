@@ -1,0 +1,23 @@
+{
+	"schemaVersion": 1,
+	"id": "poseidons_crown",
+	"version": "${version}",
+
+	"name": "Poseidon's Crown",
+	"description": "Magical ocean artifact helmet: craft from an enchanted golden helmet, a diamond, and a heart of the sea.",
+	"authors": [ "You" ],
+	"license": "CC0-1.0",
+
+	"environment": "*",
+	"entrypoints": {
+		"main": [ "poseidonscrown.PoseidonsCrownMod" ]
+	},
+	"mixins": [ "poseidons_crown.mixins.json" ],
+
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}

@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "poseidons_crown:item/poseidons_crown"
+	}
+}
