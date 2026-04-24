@@ -9,10 +9,17 @@
 2. **Diamond**
 3. **Heart of the sea**
 
+## Requirements
+
+- Minecraft **1.20.1**
+- Fabric Loader **≥ 0.18.4** (see `gradle.properties` / `fabric.mod.json`)
+- [Fabric API](https://github.com/FabricMC/fabric) — **required** at runtime (`modImplementation` in `build.gradle`)
+
 ## Dev
 
-- JDK 17+, `./gradlew build`, `./gradlew runClient`
-- Pinned: MC 1.20.1, Fabric Loader in `gradle.properties` (min 0.18.4 in `fabric.mod.json`)
+- **JDK 17+**
+- `./gradlew build` — JAR: `build/libs/poseidons-crown-<version>.jar` (put in the `mods` folder)
+- `./gradlew runClient` for a local Loom game instance
 
 ## Textures and art
 
