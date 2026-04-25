@@ -46,3 +46,5 @@ For UV preview or a fully custom item/block model, use [Blockbench](https://www.
 ## License / Mojang art
 
 The compositor uses Mojang’s gold armor layers and item art as a **base** for local development; for public distribution, replace with fully original art or adjust per Mojang’s brand/modding terms as you see fit.
+
+**Implementation note (1.20.1):** the crown item uses vanilla `Unbreakable` on the `ItemStack` NBT (`getDefaultInstance` + `inventoryTick`), not only `canBeDepleted()`, so durability and tooltip match `/give {Unbreakable:1}`.
