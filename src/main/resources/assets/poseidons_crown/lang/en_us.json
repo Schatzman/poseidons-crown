@@ -1,6 +1,6 @@
 {
 	"item.poseidons_crown.poseidons_crown": "Poseidon's Crown",
 	"itemGroup.poseidons_crown.poseidons_crown": "Poseidon's Crown",
-	"item.poseidons_crown.poseidons_crown.lore.1": "While worn: Water Breathing, Dolphin's Grace, and Conduit Power.",
-	"item.poseidons_crown.poseidons_crown.lore.2": "Craft with a turtle shell: copies its enchantments; Aqua Affinity is always at least I."
+	"item.poseidons_crown.poseidons_crown.lore.1": "While worn: Water Breathing, Dolphin's Grace, and Conduit Power. Piglins treat this helm like gold armor.",
+	"item.poseidons_crown.poseidons_crown.lore.2": "Craft: enchanted gold helmet, diamond, heart of the sea in one row; or shapeless: gold helmet, any enchanted book, diamond, heart. Aqua Affinity is at least I."
 }

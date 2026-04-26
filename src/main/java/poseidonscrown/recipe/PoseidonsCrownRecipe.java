@@ -19,6 +19,10 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import poseidonscrown.PoseidonsCrownMod;
 
+/**
+ * Two patterns, one serializer: (1) one row: enchanted golden helmet + diamond + heart of the
+ * sea; (2) shapeless: any golden helmet + any enchanted book (non-empty) + diamond + heart.
+ */
 public class PoseidonsCrownRecipe implements CraftingRecipe {
 	private final ResourceLocation id;
 	private final CraftingBookCategory category;
@@ -30,6 +34,11 @@ public class PoseidonsCrownRecipe implements CraftingRecipe {
 
 	@Override
 	public boolean matches(CraftingContainer inv, Level level) {
+		return matchesShaped(inv) || matchesShapeless(inv);
+	}
+
+	/** One horizontal row: enchanted gold helm, diamond, heart. */
+	private static boolean matchesShaped(CraftingContainer inv) {
 		List<Integer> slots = new ArrayList<>();
 		for (int i = 0; i < 9; i++) {
 			if (!inv.getItem(i).isEmpty()) {
@@ -51,22 +60,78 @@ public class PoseidonsCrownRecipe implements CraftingRecipe {
 		ItemStack helm = inv.getItem(a);
 		ItemStack diamond = inv.getItem(b);
 		ItemStack heart = inv.getItem(c);
-		return helm.getItem() == Items.TURTLE_HELMET
-				&& diamond.getItem() == Items.DIAMOND
-				&& heart.getItem() == Items.HEART_OF_THE_SEA;
+		if (helm.getItem() != Items.GOLDEN_HELMET
+				|| diamond.getItem() != Items.DIAMOND
+				|| heart.getItem() != Items.HEART_OF_THE_SEA) {
+			return false;
+		}
+		return !EnchantmentHelper.getEnchantments(helm).isEmpty();
+	}
+
+	/** Four items, any layout: gold helm, enchanted book, diamond, heart. */
+	private static boolean matchesShapeless(CraftingContainer inv) {
+		int gold = 0;
+		int book = 0;
+		int diamond = 0;
+		int heart = 0;
+		int nonEmpty = 0;
+		for (int i = 0; i < 9; i++) {
+			ItemStack s = inv.getItem(i);
+			if (s.isEmpty()) {
+				continue;
+			}
+			nonEmpty++;
+			if (s.getItem() == Items.GOLDEN_HELMET) {
+				gold++;
+			} else if (s.getItem() == Items.ENCHANTED_BOOK) {
+				book++;
+			} else if (s.getItem() == Items.DIAMOND) {
+				diamond++;
+			} else if (s.getItem() == Items.HEART_OF_THE_SEA) {
+				heart++;
+			} else {
+				return false;
+			}
+		}
+		if (nonEmpty != 4) {
+			return false;
+		}
+		if (gold != 1 || diamond != 1 || heart != 1 || book != 1) {
+			return false;
+		}
+		for (int i = 0; i < 9; i++) {
+			ItemStack s = inv.getItem(i);
+			if (s.getItem() == Items.ENCHANTED_BOOK) {
+				return !EnchantmentHelper.getEnchantments(s).isEmpty();
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public ItemStack assemble(CraftingContainer inv, RegistryAccess reg) {
-		ItemStack helm = ItemStack.EMPTY;
-		for (int i = 0; i < 9; i++) {
-			ItemStack s = inv.getItem(i);
-			if (s.getItem() == Items.TURTLE_HELMET) {
-				helm = s;
-				break;
+		if (matchesShaped(inv)) {
+			for (int i = 0; i < 9; i++) {
+				ItemStack s = inv.getItem(i);
+				if (s.getItem() == Items.GOLDEN_HELMET) {
+					return mergeIntoCrown(s, ItemStack.EMPTY);
+				}
 			}
 		}
-		return mergeHelmIntoCrown(helm);
+		if (matchesShapeless(inv)) {
+			ItemStack helm = ItemStack.EMPTY;
+			ItemStack book = ItemStack.EMPTY;
+			for (int i = 0; i < 9; i++) {
+				ItemStack s = inv.getItem(i);
+				if (s.getItem() == Items.GOLDEN_HELMET) {
+					helm = s;
+				} else if (s.getItem() == Items.ENCHANTED_BOOK) {
+					book = s;
+				}
+			}
+			return mergeIntoCrown(helm, book);
+		}
+		return ItemStack.EMPTY;
 	}
 
 	@Override
@@ -79,7 +144,6 @@ public class PoseidonsCrownRecipe implements CraftingRecipe {
 		return makeResultPreview();
 	}
 
-	/** JEI/REI: preview without a specific turtle stack. */
 	private static ItemStack makeResultPreview() {
 		ItemStack out = new ItemStack(PoseidonsCrownMod.POSEIDONS_CROWN_ITEM);
 		out.getOrCreateTag().putBoolean("Unbreakable", true);
@@ -87,20 +151,25 @@ public class PoseidonsCrownRecipe implements CraftingRecipe {
 		return out;
 	}
 
-	/** Result: unbreakable + helm enchantments, Aqua Affinity at least 1. */
-	public static ItemStack mergeHelmIntoCrown(ItemStack helm) {
+	private static void addEnchantMergeInto(
+			Map<Enchantment, Integer> into, Map<Enchantment, Integer> from) {
+		for (var e : from.entrySet()) {
+			Enchantment k = e.getKey();
+			if (k == null) {
+				continue;
+			}
+			into.merge(k, e.getValue(), Math::max);
+		}
+	}
+
+	/** Merges helm and optional enchanted book, then enforces at least Aqua Affinity I. */
+	public static ItemStack mergeIntoCrown(ItemStack helm, ItemStack book) {
 		ItemStack out = new ItemStack(PoseidonsCrownMod.POSEIDONS_CROWN_ITEM);
 		out.getOrCreateTag().putBoolean("Unbreakable", true);
-		Map<Enchantment, Integer> fromHelm = EnchantmentHelper.getEnchantments(helm);
 		HashMap<Enchantment, Integer> combined = new HashMap<>();
-		if (!fromHelm.isEmpty()) {
-			for (var e : fromHelm.entrySet()) {
-				Enchantment k = e.getKey();
-				if (k == null) {
-					continue;
-				}
-				combined.put(k, e.getValue());
-			}
+		addEnchantMergeInto(combined, EnchantmentHelper.getEnchantments(helm));
+		if (!book.isEmpty()) {
+			addEnchantMergeInto(combined, EnchantmentHelper.getEnchantments(book));
 		}
 		int aa = Math.max(1, combined.getOrDefault(Enchantments.AQUA_AFFINITY, 0));
 		combined.put(Enchantments.AQUA_AFFINITY, aa);

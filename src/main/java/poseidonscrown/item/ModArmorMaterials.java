@@ -9,7 +9,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
 public enum ModArmorMaterials implements ArmorMaterial {
-	POSEIDONS_CROWN("poseidons_crown", 37, createDefenseMap(6), 15, SoundEvents.ARMOR_EQUIP_GOLD, 3.0F, 0.1F, Ingredient.of(Items.HEART_OF_THE_SEA));
+	POSEIDONS_CROWN("poseidons_crown", 37, createDefenseMap(6), 15, SoundEvents.ARMOR_EQUIP_GOLD, 3.0F, 0.1F, Ingredient.of(Items.GOLD_INGOT));
 
 	private static final EnumMap<ArmorItem.Type, Integer> createDefenseMap(int headDefense) {
 		EnumMap<ArmorItem.Type, Integer> map = new EnumMap<>(ArmorItem.Type.class);
