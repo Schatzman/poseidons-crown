@@ -1,11 +1,16 @@
 package poseidonscrown.item;
 
+import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class PoseidonsCrownItem extends ArmorItem {
 	public PoseidonsCrownItem() {
@@ -13,6 +18,23 @@ public class PoseidonsCrownItem extends ArmorItem {
 				ModArmorMaterials.POSEIDONS_CROWN,
 				ArmorItem.Type.HELMET,
 				new Item.Properties().rarity(Rarity.EPIC));
+	}
+
+	@Override
+	public void appendHoverText(
+			ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, level, tooltip, flag);
+		tooltip.add(
+				Component.translatable("item.poseidons_crown.poseidons_crown.lore.1")
+						.withStyle(ChatFormatting.GRAY));
+		tooltip.add(
+				Component.translatable("item.poseidons_crown.poseidons_crown.lore.2")
+						.withStyle(ChatFormatting.GRAY));
+	}
+
+	@Override
+	public boolean isFoil(ItemStack stack) {
+		return true;
 	}
 
 	@Override
@@ -26,9 +48,9 @@ public class PoseidonsCrownItem extends ArmorItem {
 	 */
 	@Override
 	public ItemStack getDefaultInstance() {
-		ItemStack stack = super.getDefaultInstance();
-		stack.getOrCreateTag().putBoolean("Unbreakable", true);
-		return stack;
+		ItemStack s = super.getDefaultInstance();
+		s.getOrCreateTag().putBoolean("Unbreakable", true);
+		return s;
 	}
 
 	@Override
